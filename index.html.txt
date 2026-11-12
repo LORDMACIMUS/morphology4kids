@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morphology Explorer Pro - Multi-Year Curriculum</title>
+  <style>
+    :root {
+      --color-bg: #F4F7F2;
+      --color-card: #FFFFFF;
+      --color-bark: #3D405B;
+      --color-sage: #81B29A;
+      --color-sage-dark: #64967E;
+      --color-terracotta: #E07A5F;
+      --color-terracotta-dark: #C85A3F;
+      --color-amber: #F2CC8F;
+      --color-amber-dark: #D8AA64;
+      --color-border: #E0E5DD;
+      --color-text-muted: #6C757D;
+      --color-good: #81B29A;
+      --color-amazing: #3A86FF;
+      --color-awesome: #FFB703;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-bark);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* LEFT PANEL: Owly & Controls */
+    .left-panel {
+      background: #EAEFE7;
+      border-right: 2px solid var(--color-border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .header-box {
+      text-align: center;
+    }
+    .header-box h1 {
+      font-size: 1.4rem;
+      color: var(--color-bark);
+      margin-bottom: 4px;
+    }
+    .header-box p {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Owly Visual Area */
+    .owly-stage {
+      background: var(--color-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 2px solid var(--color-border);
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .speech-bubble {
+      background: #FDFBF7;
+      border: 2px solid var(--color-amber-dark);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      color: var(--color-bark);
+      position: relative;
+      margin-bottom: 12px;
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px 8px 0;
+      border-style: solid;
+      border-color: var(--color-amber-dark) transparent;
+      display: block;
+      width: 0;
+    }
+
+    .owly-avatar {
+      font-size: 4.8rem;
+      line-height: 1;
+      user-select: none;
+      transition: transform 0.3s ease;
+      display: inline-block;
+      margin: 8px 0;
+    }
+    .owly-avatar.bounce {
+      animation: owlyBounce 0.6s ease infinite alternate;
+    }
+    @keyframes owlyBounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
+
+    .tier-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+    .tier-starter { background: #E2E8F0; color: #475569; }
+    .tier-good { background: #D1E7DD; color: #0F5132; }
+    .tier-amazing { background: #CFE2FF; color: #084298; }
+    .tier-awesome { background: #FFF3CD; color: #664D03; }
+
+    /* Voice Controls */
+    .voice-card {
+      background: var(--color-card);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      border: 2px solid var(--color-border);
+    }
+    .voice-card h3 {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: var(--color-bark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .slider-row input {
+      width: 60%;
+    }
+
+    /* Overall Progress Summary */
+    .progress-card {
+      background: var(--color-card);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      border: 2px solid var(--color-border);
+    }
+    .progress-card h3 {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+    .progress-bar-bg {
+      background: #E2E8F0;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .progress-bar-fill {
+      background: var(--color-terracotta);
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    /* RIGHT PANEL: Main Content & Navigator */
+    .right-panel {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: 10px;
+    }
+    .tab-btn {
+      background: var(--color-card);
+      border: 2px solid var(--color-border);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--color-bark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover {
+      border-color: var(--color-terracotta);
+    }
+    .tab-btn.active {
+      background: var(--color-terracotta);
+      color: white;
+      border-color: var(--color-terracotta-dark);
+    }
+
+    /* Morpheme Selector Bar */
+    .morpheme-selector {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .morpheme-pill {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .morpheme-pill:hover {
+      background: #F1F5F0;
+    }
+    .morpheme-pill.active {
+      background: var(--color-bark);
+      color: white;
+      border-color: var(--color-bark);
+    }
+
+    /* Lesson Workspace Cards */
+    .lesson-card {
+      background: var(--color-card);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--color-border);
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .unit-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #FDFBF7;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border-left: 6px solid var(--color-terracotta);
+    }
+    .unit-title {
+      font-size: 1.6rem;
+      color: var(--color-bark);
+      font-weight: 800;
+    }
+    .unit-meaning {
+      font-size: 1.05rem;
+      color: var(--color-terracotta-dark);
+      font-weight: 600;
+    }
+
+    /* Step Workspaces */
+    .step-section {
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--color-border);
+    }
+    .step-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-bark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-number {
+      background: var(--color-bark);
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    /* Examples & Non-Examples Grids */
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .input-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .input-row input:focus {
+      border-color: var(--color-terracotta);
+    }
+    .btn-submit {
+      background: var(--color-terracotta);
+      color: white;
+      border: none;
+      padding: 0 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn-submit:hover {
+      background: var(--color-terracotta-dark);
+    }
+
+    .word-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px;
+      background: var(--color-card);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--color-border);
+    }
+    .tag {
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tag-example {
+      background: #E2F0D9;
+      color: #385723;
+      border: 1px solid #C5E0B4;
+    }
+    .tag-nonexample {
+      background: #FCE4D6;
+      color: #C65911;
+      border: 1px solid #F8CBAD;
+    }
+
+    /* Fluency Grid Drill */
+    .fluency-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .fluency-cell {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 10px 4px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-bark);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .fluency-cell:hover {
+      background: var(--color-amber);
+      transform: scale(1.03);
+    }
+
+    /* Mastery Quiz View */
+    .quiz-container {
+      background: var(--color-card);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--color-border);
+      padding: 28px;
+      display: none;
+    }
+    .quiz-question {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--color-bark);
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .quiz-opt-btn {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .quiz-opt-btn:hover {
+      border-color: var(--color-terracotta);
+      background: #FDFBF7;
+    }
+
+    /* Audio Indicator Pulsing */
+    .speaking-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--color-terracotta);
+      border-radius: 50%;
+      margin-left: 6px;
+      opacity: 0;
+    }
+    .speaking-indicator.active {
+      animation: pulseAudio 0.8s ease infinite alternate;
+    }
+    @keyframes pulseAudio {
+      from { opacity: 0.2; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1.3); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- LEFT PANEL: Owly Mascot & Voice Control -->
+    <aside class="left-panel">
+      <div class="header-box">
+        <h1>Morphology Explorer</h1>
+        <p>Chromebook Studio • Multi-Year Curriculum</p>
+      </div>
+
+      <!-- Owly Visual Stage -->
+      <div class="owly-stage">
+        <div class="speech-bubble" id="owlySpeech">
+          Hoot! Welcome word detective! Select a set to begin exploring morphemes.
+        </div>
+        <div class="owly-avatar" id="owlyAvatar">🦉</div>
+        <div>
+          <span class="tier-badge tier-starter" id="owlyTier">Starter Detective</span>
+          <span class="speaking-indicator" id="speakingDot"></span>
+        </div>
+      </div>
+
+      <!-- Voice Tuning Controls -->
+      <div class="voice-card">
+        <h3>
+          <span>Owly's Voice Settings</span>
+          <button style="border:none; background:none; cursor:pointer;" onclick="testOwlyVoice()">🔊 Test</button>
+        </h3>
+        <div class="slider-group">
+          <div class="slider-row">
+            <label for="pitchSlider">Pitch (Gravelly):</label>
+            <input type="range" id="pitchSlider" min="0.1" max="1.0" step="0.05" value="0.3" onchange="speakOwly('Hoot! Pitch adjusted!')">
+          </div>
+          <div class="slider-row">
+            <label for="rateSlider">Speed (Rate):</label>
+            <input type="range" id="rateSlider" min="0.5" max="1.2" step="0.05" value="0.82">
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Unit Progress -->
+      <div class="progress-card">
+        <h3>Unit Mastery Progress</h3>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="unitProgressBar"></div>
+        </div>
+        <div class="progress-stats">
+          <span id="wordsFoundCount">0 Words Discovered</span>
+          <span id="milestoneTarget">Goal: 5 (Good)</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL: Curriculum Navigator & Workspaces -->
+    <main class="right-panel">
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchSet(1)">Set 1: Grades ≤ 3</button>
+        <button class="tab-btn" onclick="switchSet(2)">Set 2: Grades 3–4</button>
+        <button class="tab-btn" onclick="switchSet(3)">Set 3: Grades 4–5+</button>
+        <button class="tab-btn" style="margin-left:auto; background:var(--color-amber);" onclick="startSetQuiz()">End-of-Set Quiz 📝</button>
+      </nav>
+
+      <!-- Morpheme Selector Pills -->
+      <div class="morpheme-selector" id="morphemeSelector">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Active Lesson Workspace -->
+      <section class="lesson-card" id="lessonWorkspace">
+        <div class="unit-banner">
+          <div>
+            <div class="unit-title" id="unitTitle">un-</div>
+            <div style="font-size: 0.85rem; color: var(--color-text-muted);" id="unitType">Prefix</div>
+          </div>
+          <div class="unit-meaning" id="unitMeaning">Meaning: not</div>
+        </div>
+
+        <!-- Step 1: Definition & Owly Prompt -->
+        <div class="step-section">
+          <div class="step-title"><span class="step-number">1</span> Morpheme Overview</div>
+          <p id="unitInstruction" style="font-size: 0.9rem; line-height: 1.4; color: var(--color-bark);">
+            The prefix <strong>un-</strong> attaches to the front of a word to mean "not".
+          </p>
+        </div>
+
+        <!-- Step 2: Interactive Examples Entry -->
+        <div class="step-section">
+          <div class="step-title"><span class="step-number">2</span> Example Word Discovery</div>
+          <div class="input-row">
+            <input type="text" id="wordInput" placeholder="Type a word using this morpheme..." onkeydown="if(event.key==='Enter') submitWord()">
+            <button class="btn-submit" onclick="submitWord()">Check Word</button>
+          </div>
+          <div class="word-tags" id="examplesContainer">
+            <!-- Student verified examples go here -->
+          </div>
+        </div>
+
+        <!-- Step 3: False-Root Detector (Non-Examples) -->
+        <div class="step-section">
+          <div class="step-title"><span class="step-number">3</span> Non-Example Detector ("Uncle" Rule)</div>
+          <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 8px;">
+            Words that look like they have the prefix/suffix but do NOT share the root meaning get sorted here!
+          </p>
+          <div class="word-tags" id="nonExamplesContainer">
+            <!-- Automatically caught false roots end up here -->
+          </div>
+        </div>
+
+        <!-- Step 4: Fluency Grid Drill -->
+        <div class="step-section">
+          <div class="step-title"><span class="step-number">4</span> Speed Reading Fluency Grid</div>
+          <p style="font-size: 0.8rem; color: var(--color-text-muted);">Click each word as fast as you can read it!</p>
+          <div class="fluency-grid" id="fluencyGrid">
+            <!-- 7-word repeating drill grid -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Quiz View (Hidden by default) -->
+      <section class="quiz-container" id="quizWorkspace">
+        <h2 style="margin-bottom: 12px;" id="quizTitle">Set Mastery Quiz</h2>
+        <div class="quiz-question" id="quizQuestion">Loading question...</div>
+        <div class="quiz-options" id="quizOptions">
+          <!-- Quiz options inserted dynamically -->
+        </div>
+        <button class="btn-submit" style="padding: 10px 20px;" onclick="closeQuiz()">Return to Lesson Studio</button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       CURRICULUM DATABASE: Jan Burkins, Kari Yates, & Katie Egan Cunningham
+       ========================================================================== */
+    const CURRICULUM = {
+      set1: [
+        { id: "un-", type: "Prefix", meaning: "not", examples: ["unfed", "uncut", "uncap", "undo", "unlike", "unzip", "unfair", "unlock", "unsafe", "unseen", "unhappy"], nonExamples: ["uncle", "under", "universe"] },
+        { id: "re-", type: "Prefix", meaning: "again, back", examples: ["reset", "rerun", "refit", "recap", "remove", "repaint", "rewash", "repay", "replay"], nonExamples: ["real", "reach", "ready"] },
+        { id: "pre-", type: "Prefix", meaning: "before", examples: ["prefix", "premix", "pretax", "preview", "presale", "preheat", "prewarn", "print"], nonExamples: ["president", "pretty", "press"] },
+        { id: "non-", type: "Prefix", meaning: "not, absence", examples: ["nonfat", "nonstop", "nonfood", "nonslip", "nonsense", "stick", "nondairy"], nonExamples: ["noon", "noble"] },
+        { id: "over-", type: "Prefix", meaning: "too much, above", examples: ["overall", "overrun", "overlay", "overeat", "overbuy", "overflow", "overturn"], nonExamples: ["oven", "overt"] },
+        { id: "under-", type: "Prefix", meaning: "under, beneath", examples: ["undercut", "underbuy", "underarm", "underline", "underside", "underfoot"], nonExamples: ["understand"] },
+        { id: "mid-", type: "Prefix", meaning: "in the middle, part way", examples: ["midway", "midday", "midsize", "midland", "midyear", "midweek"], nonExamples: ["midge", "middle"] },
+        { id: "super-", type: "Prefix", meaning: "above, beyond, better", examples: ["superman", "supermom", "supercar", "superstar", "superhero", "superglue"], nonExamples: ["supper"] },
+        { id: "-s, -es (plural)", type: "Suffix", meaning: "more than one", examples: ["dogs", "days", "tops", "nuts", "boats", "towns", "cars", "boxes", "brushes"], nonExamples: ["yes", "bus", "lens"] },
+        { id: "-s, -es (verb)", type: "Suffix", meaning: "present tense verb", examples: ["hits", "kicks", "reads", "likes", "plays", "enjoys", "fixes", "misses"], nonExamples: ["this"] },
+        { id: "-ed", type: "Suffix", meaning: "past tense verb", examples: ["kicked", "walked", "jumped", "fished", "acted", "melted", "twisted"], nonExamples: ["red", "bed", "seed"] },
+        { id: "-ing", type: "Suffix", meaning: "present tense verb", examples: ["acting", "asking", "waiting", "playing", "seeing", "running", "reading"], nonExamples: ["king", "ring", "sing"] },
+        { id: "-ly", type: "Suffix", meaning: "adverb (how something is done)", examples: ["hardly", "shyly", "softly", "openly", "loudly", "quietly", "happily"], nonExamples: ["fly", "family", "jelly"] },
+        { id: "-er (person)", type: "Suffix", meaning: "someone who", examples: ["maker", "rider", "voter", "teacher", "farmer", "player", "printer"], nonExamples: ["water", "butter", "paper"] },
+        { id: "-or", type: "Suffix", meaning: "someone who, something that", examples: ["doctor", "actor", "editor", "author", "creator", "inspector", "operator"], nonExamples: ["door", "floor"] },
+        { id: "-er/-est", type: "Suffix", meaning: "more / most", examples: ["faster", "fastest", "slower", "slowest", "stronger", "strongest", "kinder", "kindest"], nonExamples: ["monster"] },
+        { id: "-less", type: "Suffix", meaning: "without", examples: ["toyless", "bedless", "winless", "endless", "harmless", "homeless", "toothless"], nonExamples: ["bless", "unless"] },
+        { id: "-ful", type: "Suffix", meaning: "full of", examples: ["joyful", "useful", "artful", "helpful", "thankful", "cheerful", "hopeful"], nonExamples: ["awful"] },
+        { id: "-y", type: "Suffix", meaning: "very much like", examples: ["foxy", "sticky", "rocky", "windy", "messy", "bloody", "sunny", "funny"], nonExamples: ["sky", "cry", "body"] }
+      ],
+      set2: [
+        { id: "in-/im-", type: "Prefix", meaning: "not", examples: ["incapable", "inedible", "intolerant", "invalid", "indirect", "immature", "impatient"], nonExamples: ["inch", "insect", "image"] },
+        { id: "dis-", type: "Prefix", meaning: "not, apart, opposite", examples: ["disagree", "disloyal", "disprove", "disadvantage", "dishonest", "disorder"], nonExamples: ["distance", "disk"] },
+        { id: "mis-", type: "Prefix", meaning: "wrongly, badly", examples: ["misuse", "mishap", "misfit", "mislead", "misread", "mistrust", "misjudge"], nonExamples: ["miss", "mission"] },
+        { id: "semi-", type: "Prefix", meaning: "half, partly", examples: ["semisoft", "semihard", "semifinal", "semisolid", "semiround", "semicircle"], nonExamples: ["seminar"] },
+        { id: "fore-", type: "Prefix", meaning: "before, front", examples: ["forearm", "foreman", "foresee", "foreleg", "forecast", "forewarn"], nonExamples: ["forest", "foreign"] },
+        { id: "sub-", type: "Prefix", meaning: "under, below", examples: ["subsoil", "submenu", "submarine", "subway", "subplot", "subtotal"], nonExamples: ["subject"] },
+        { id: "inter-", type: "Prefix", meaning: "among, between", examples: ["internet", "interact", "intermix", "intertwine", "interstate", "international"], nonExamples: ["interest"] },
+        { id: "micro-", type: "Prefix", meaning: "tiny, one millionth", examples: ["microwave", "microchip", "microfilm", "microphone", "microscope"], nonExamples: ["microbe"] },
+        { id: "trans-", type: "Prefix", meaning: "across, beyond", examples: ["transform", "transport", "transparent", "transaction", "transfer"], nonExamples: ["transit"] },
+        { id: "anti-", type: "Prefix", meaning: "against", examples: ["antiwar", "antilock", "antispam", "antivirus", "antiseptic", "antisocial"], nonExamples: ["antique"] },
+        { id: "multi-", type: "Prefix", meaning: "many", examples: ["multiple", "multiply", "multitask", "multiplication", "multicolor"], nonExamples: ["multitude"] },
+        { id: "out-", type: "Prefix", meaning: "greater, better, more", examples: ["outwit", "outhit", "outfox", "outgrow", "outsell", "outwait"], nonExamples: ["outlet"] },
+        { id: "-able/-ible", type: "Suffix", meaning: "capable of being", examples: ["passable", "washable", "readable", "flexible", "sensible", "accessible"], nonExamples: ["table", "cable"] },
+        { id: "-ness", type: "Suffix", meaning: "condition, state of", examples: ["thickness", "clearness", "steepness", "brightness", "fairness", "kindness"], nonExamples: ["harness"] },
+        { id: "-ion/-tion/-sion", type: "Suffix", meaning: "action, condition", examples: ["action", "election", "location", "operation", "education", "protection"], nonExamples: ["lion"] },
+        { id: "-ify", type: "Suffix", meaning: "cause to be", examples: ["liquify", "purify", "clarify", "glorify", "falsify", "terrify"], nonExamples: ["notify"] },
+        { id: "-al/-ial", type: "Suffix", meaning: "relating to", examples: ["magical", "logical", "global", "verbal", "facial", "arrival", "national"], nonExamples: ["animal", "petal"] },
+        { id: "-ish", type: "Suffix", meaning: "has characteristics of", examples: ["foolish", "stylish", "greenish", "childish", "sheepish", "roundish"], nonExamples: ["fish", "dish"] },
+        { id: "-ity", type: "Suffix", meaning: "state, quality of", examples: ["activity", "security", "majority", "severity", "immunity", "legality"], nonExamples: ["city"] },
+        { id: "-ment", type: "Suffix", meaning: "state, act of", examples: ["payment", "movement", "agreement", "amusement", "equipment", "adjustment"], nonExamples: ["element", "cement"] }
+      ],
+      set3: [
+        { id: "ir-/il-", type: "Prefix", meaning: "not", examples: ["irregular", "irresponsible", "irrelevant", "illogical", "illegal", "illiterate"], nonExamples: ["iron", "island"] },
+        { id: "en-/em-", type: "Prefix", meaning: "in, within, on", examples: ["enjoy", "enable", "enlist", "encode", "entrust", "enforce", "enrich"], nonExamples: ["energy", "enemy"] },
+        { id: "de-", type: "Prefix", meaning: "not, down", examples: ["decompose", "deselect", "descend", "declassify", "defrost", "dethrone"], nonExamples: ["desk", "deer"] },
+        { id: "counter-", type: "Prefix", meaning: "opposite, against", examples: ["counterfeit", "counterpoint", "counterpart", "counterblow", "counterattack"], nonExamples: ["count", "country"] },
+        { id: "-ive/-ative", type: "Suffix", meaning: "tending to", examples: ["active", "sensitive", "creative", "erosive", "adaptive", "decisive"], nonExamples: ["give", "hive"] },
+        { id: "-ist", type: "Suffix", meaning: "one who", examples: ["typist", "artist", "tourist", "chemist", "stylist", "finalist", "pianist"], nonExamples: ["list", "mist"] },
+        { id: "-ic", type: "Suffix", meaning: "relating to", examples: ["energetic", "historic", "volcanic", "atomic", "cyclic", "organic"], nonExamples: ["picnic"] },
+        { id: "-ous/-ious", type: "Suffix", meaning: "full of, having", examples: ["joyous", "famous", "nervous", "glorious", "previous", "numerous"], nonExamples: ["house", "mouse"] },
+        { id: "-en", type: "Suffix", meaning: "to cause to be", examples: ["woven", "given", "driven", "proven", "spoken", "frozen", "cheapen"], nonExamples: ["pen", "ten", "hen"] },
+        { id: "aud", type: "Latin Root", meaning: "hear", examples: ["audio", "audiobook", "auditorium", "audition", "audience", "inaudible"], nonExamples: ["audit"] },
+        { id: "chron", type: "Greek Root", meaning: "time", examples: ["chronic", "chronology", "chronicle", "synchronous", "asynchronous"], nonExamples: ["chrome"] },
+        { id: "dict", type: "Latin Root", meaning: "say", examples: ["diction", "dictionary", "prediction", "dictate", "dictator", "jurisdiction"], nonExamples: ["dictum"] },
+        { id: "port", type: "Latin Root", meaning: "to carry", examples: ["import", "export", "deport", "report", "reporter", "portable", "transport"], nonExamples: ["portion"] },
+        { id: "rupt", type: "Latin Root", meaning: "to break, burst", examples: ["abrupt", "disrupt", "disruption", "erupt", "eruption", "rupture", "interrupt"], nonExamples: ["rupture"] },
+        { id: "scrib/scrip", type: "Latin Root", meaning: "write", examples: ["scribble", "script", "prescription", "scribe", "describe", "manuscript"], nonExamples: ["scrib"] },
+        { id: "spect", type: "Latin Root", meaning: "to see, observe", examples: ["inspect", "inspection", "respect", "aspect", "perspective", "respectable"], nonExamples: ["spectrum"] },
+        { id: "struct", type: "Latin Root", meaning: "to build", examples: ["structure", "construct", "construction", "instruct", "obstruct", "destruct"], nonExamples: ["strict"] },
+        { id: "tract", type: "Latin Root", meaning: "to drag or pull", examples: ["tractor", "traction", "contract", "extract", "subtract", "retract", "distract"], nonExamples: ["track"] },
+        { id: "tele", type: "Greek Root", meaning: "distant, far", examples: ["telescope", "television", "telegraph", "telecommunication", "teleport"], nonExamples: ["telephone"] },
+        { id: "vid/vis", type: "Latin Root", meaning: "to see", examples: ["video", "visit", "visitor", "visual", "vision", "visible", "invisible", "evidence"], nonExamples: ["visa"] }
+      ]
+    };
+
+    /* App State */
+    let currentSetKey = "set1";
+    let currentUnitIndex = 0;
+    let foundWords = new Set();
+
+    /* Initialize Application */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderMorphemeSelector();
+      loadUnit(0);
+    });
+
+    /* Switch Grade Sets */
+    function switchSet(setNum) {
+      currentSetKey = `set${setNum}`;
+      currentUnitIndex = 0;
+      
+      document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === (setNum - 1));
+      });
+
+      document.getElementById('quizWorkspace').style.display = 'none';
+      document.getElementById('lessonWorkspace').style.display = 'flex';
+
+      renderMorphemeSelector();
+      loadUnit(0);
+    }
+
+    /* Render Morpheme Pills */
+    function renderMorphemeSelector() {
+      const container = document.getElementById('morphemeSelector');
+      container.innerHTML = '';
+      
+      CURRICULUM[currentSetKey].forEach((unit, idx) => {
+        const pill = document.createElement('div');
+        pill.className = `morpheme-pill ${idx === currentUnitIndex ? 'active' : ''}`;
+        pill.textContent = unit.id;
+        pill.onclick = () => loadUnit(idx);
+        container.appendChild(pill);
+      });
+    }
+
+    /* Load Selected Morpheme Unit */
+    function loadUnit(index) {
+      currentUnitIndex = index;
+      const unit = CURRICULUM[currentSetKey][index];
+
+      // Update Active Pill
+      document.querySelectorAll('.morpheme-pill').forEach((pill, idx) => {
+        pill.classList.toggle('active', idx === index);
+      });
+
+      // Update Unit Header & Overview
+      document.getElementById('unitTitle').textContent = unit.id;
+      document.getElementById('unitType').textContent = unit.type;
+      document.getElementById('unitMeaning').textContent = `Meaning: ${unit.meaning}`;
+      document.getElementById('unitInstruction').innerHTML = `
+        The ${unit.type.toLowerCase()} <strong>${unit.id}</strong> means "<em>${unit.meaning}</em>". 
+        Find words that build on this meaning!
+      `;
+
+      // Clear & Populate Tag Containers
+      const exContainer = document.getElementById('examplesContainer');
+      exContainer.innerHTML = '';
+      unit.examples.slice(0, 4).forEach(w => addTag(w, 'example'));
+
+      const nonExContainer = document.getElementById('nonExamplesContainer');
+      nonExContainer.innerHTML = '';
+      unit.nonExamples.forEach(w => addTag(w, 'nonexample'));
+
+      // Populate Speed Fluency Grid (7-word repeating row)
+      const fluencyContainer = document.getElementById('fluencyGrid');
+      fluencyContainer.innerHTML = '';
+      const gridWords = [...unit.examples, ...unit.examples].slice(0, 14);
+      gridWords.forEach(w => {
+        const cell = document.createElement('div');
+        cell.className = 'fluency-cell';
+        cell.textContent = w;
+        cell.onclick = () => {
+          speakOwly(w);
+          cell.style.background = '#81B29A';
+          cell.style.color = 'white';
+        };
+        fluencyContainer.appendChild(cell);
+      });
+
+      // Owly Introduction
+      const introSpeech = `Hoot! Exploring ${unit.type} ${unit.id}, which means ${unit.meaning}.`;
+      speakOwly(introSpeech);
+    }
+
+    /* Helper: Add Tag Pill */
+    function addTag(word, type) {
+      const container = type === 'example' ? document.getElementById('examplesContainer') : document.getElementById('nonExamplesContainer');
+      const tag = document.createElement('span');
+      tag.className = `tag tag-${type}`;
+      tag.textContent = (type === 'example' ? '✓ ' : '⚠️ ') + word;
+      container.appendChild(tag);
+    }
+
+    /* Submit & Evaluate Word Input */
+    function submitWord() {
+      const input = document.getElementById('wordInput');
+      const word = input.value.trim().toLowerCase();
+      if (!word) return;
+
+      const unit = CURRICULUM[currentSetKey][currentUnitIndex];
+
+      // Check if it's a known false root / non-example
+      if (unit.nonExamples.includes(word)) {
+        addTag(word, 'nonexample');
+        const alertMsg = `Watch out! ${word} looks like it has ${unit.id}, but it is a false root!`;
+        speakOwly(alertMsg);
+      } 
+      // Valid example match
+      else if (unit.examples.includes(word) || word.includes(unit.id.replace(/[-]/g, ''))) {
+        if (!foundWords.has(word)) {
+          foundWords.add(word);
+          addTag(word, 'example');
+          updateProgress();
+        }
+        speakOwly(`Awesome! ${word} is a great example of ${unit.id}!`);
+      } else {
+        speakOwly(`Hmm, let's look closer at ${word}. Does it fit the meaning: ${unit.meaning}?`);
+      }
+
+      input.value = '';
+    }
+
+    /* Update Progress & Tier Badges */
+    function updateProgress() {
+      const count = foundWords.size;
+      document.getElementById('wordsFoundCount').textContent = `${count} Words Discovered`;
+      
+      const bar = document.getElementById('unitProgressBar');
+      const percentage = Math.min((count / 15) * 100, 100);
+      bar.style.width = `${percentage}%`;
+
+      const avatar = document.getElementById('owlyAvatar');
+      const badge = document.getElementById('owlyTier');
+
+      if (count >= 15) {
+        badge.className = 'tier-badge tier-awesome';
+        badge.textContent = 'AWESOME DETECTIVE! 👑';
+        avatar.textContent = '🦉👑';
+      } else if (count >= 10) {
+        badge.className = 'tier-badge tier-amazing';
+        badge.textContent = 'AMAZING DETECTIVE! 🔍';
+        avatar.textContent = '🦉🔍';
+      } else if (count >= 5) {
+        badge.className = 'tier-badge tier-good';
+        badge.textContent = 'GOOD JOB! ⭐';
+        avatar.textContent = '🦉⭐';
+      }
+    }
+
+    /* Web Speech Voice Engine (Owly Michael Ironside Voice) */
+    function speakOwly(text) {
+      document.getElementById('owlySpeech').textContent = text;
+      
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.pitch = parseFloat(document.getElementById('pitchSlider').value) || 0.3;
+      utter.rate = parseFloat(document.getElementById('rateSlider').value) || 0.82;
+
+      // Select deep/male voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const maleVoice = voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('george'));
+      if (maleVoice) utter.voice = maleVoice;
+
+      const dot = document.getElementById('speakingDot');
+      const avatar = document.getElementById('owlyAvatar');
+
+      utter.onstart = () => {
+        dot.classList.add('active');
+        avatar.classList.add('bounce');
+      };
+      utter.onend = () => {
+        dot.classList.remove('active');
+        avatar.classList.remove('bounce');
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function testOwlyVoice() {
+      speakOwly("Hoot! I am Owly, your gravelly voice morphology guide!");
+    }
+
+    /* End of Set Mastery Quiz */
+    function startSetQuiz() {
+      document.getElementById('lessonWorkspace').style.display = 'none';
+      const quizView = document.getElementById('quizWorkspace');
+      quizView.style.display = 'block';
+
+      const unit = CURRICULUM[currentSetKey][0];
+      document.getElementById('quizTitle').textContent = `Mastery Quiz: ${currentSetKey.toUpperCase()}`;
+      document.getElementById('quizQuestion').textContent = `Which of the following words correctly uses the morpheme "${unit.id}" (${unit.meaning})?`;
+
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+
+      const correctWord = unit.examples[0];
+      const wrong1 = unit.nonExamples[0] || "uncle";
+      const wrong2 = "table";
+
+      const opts = [correctWord, wrong1, wrong2].sort(() => Math.random() - 0.5);
+
+      opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (opt === correctWord) {
+            speakOwly(`Correct! ${opt} is a true example! You mastered this set!`);
+            btn.style.background = '#81B29A';
+            btn.style.color = 'white';
+          } else {
+            speakOwly(`Oops! ${opt} is a non-example or false root. Try again!`);
+            btn.style.background = '#E07A5F';
+            btn.style.color = 'white';
+          }
+        };
+        optionsContainer.appendChild(btn);
+      });
+
+      speakOwly(`Welcome to the End of Set Quiz! Answer the question on screen.`);
+    }
+
+    function closeQuiz() {
+      document.getElementById('quizWorkspace').style.display = 'none';
+      document.getElementById('lessonWorkspace').style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
