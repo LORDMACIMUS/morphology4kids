@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Morphology Explorer Pro - Multi-Year Studio</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Morphology Explorer - Classroom Studio</title>
   <style>
     :root {
       --color-bg: #F4F7F2;
@@ -40,22 +39,9 @@
 
     .header-box { text-align: center; }
     .header-box h1 {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       color: var(--color-bark);
       margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .pro-pill {
-      background: linear-gradient(135deg, #F2CC8F, #E07A5F);
-      color: #2B1E16;
-      font-size: 0.65rem;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
     }
     .header-box p { font-size: 0.78rem; color: var(--color-text-muted); }
 
@@ -88,13 +74,13 @@
       background: var(--color-bark);
       color: white;
       border: none;
-      padding: 5px 9px;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 0.74rem;
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-upgrade { background: var(--color-terracotta); }
+    .btn-small:hover { opacity: 0.9; }
 
     .owly-stage {
       background: var(--color-card);
@@ -200,6 +186,7 @@
       align-items: center;
       gap: 6px;
     }
+    .tab-btn:hover { border-color: var(--color-terracotta); }
     .tab-btn.active { background: var(--color-terracotta); color: white; border-color: var(--color-terracotta-dark); }
 
     .morpheme-selector {
@@ -220,6 +207,7 @@
       font-weight: 600;
       cursor: pointer;
     }
+    .morpheme-pill:hover { border-color: var(--color-terracotta); }
     .morpheme-pill.active { background: var(--color-bark); color: white; border-color: var(--color-bark); }
 
     .lesson-card {
@@ -273,217 +261,3 @@
     .btn-submit {
       background: var(--color-terracotta);
       color: white;
-      border: none;
-      padding: 0 18px;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; }
-
-    .word-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      min-height: 38px;
-      padding: 8px;
-      background: var(--color-card);
-      border-radius: var(--radius-sm);
-      border: 1px dashed var(--color-border);
-    }
-    .tag {
-      padding: 4px 10px;
-      border-radius: 14px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      max-width: 100%;
-      overflow-wrap: anywhere;
-    }
-    .tag-example { background: #E2F0D9; color: #385723; border: 1px solid #C5E0B4; }
-    .tag-nonexample { background: #FCE4D6; color: #C65911; border: 1px solid #F8CBAD; }
-
-    .fluency-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; }
-    @media (max-width: 700px) { .fluency-grid { grid-template-columns: repeat(4, 1fr); } }
-    .fluency-cell {
-      background: var(--color-card);
-      border: 1px solid var(--color-border);
-      border-radius: 6px;
-      padding: 10px 4px;
-      text-align: center;
-      font-size: 0.84rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .fluency-cell:hover { background: var(--color-amber); }
-
-    .quiz-container {
-      background: var(--color-card);
-      border-radius: var(--radius-lg);
-      border: 2px solid var(--color-border);
-      padding: 28px;
-      display: none;
-    }
-    .quiz-question { font-size: 1.15rem; font-weight: 700; margin-bottom: 16px; }
-    .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .quiz-opt-btn {
-      background: var(--color-bg);
-      border: 2px solid var(--color-border);
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      text-align: left;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(43, 30, 22, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-    }
-    .modal-box {
-      background: var(--color-card);
-      border-radius: var(--radius-lg);
-      border: 2px solid var(--color-border);
-      max-width: 500px;
-      width: 100%;
-      padding: 26px;
-      position: relative;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 1.3rem; cursor: pointer; }
-    .modal-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; }
-    .modal-sub { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 18px; line-height: 1.4; }
-    .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-    .form-field label { font-size: 0.82rem; font-weight: 700; }
-    .form-field input { padding: 10px 12px; border: 2px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.95rem; }
-    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-    .price-card { border: 2px solid var(--color-border); border-radius: var(--radius-md); padding: 14px; background: #FDFBF7; }
-    .price-card.featured { border-color: var(--color-terracotta); background: #FFF9F6; }
-    .price-amount { font-size: 1.4rem; font-weight: 800; margin: 6px 0; }
-    .price-list { list-style: none; font-size: 0.8rem; color: var(--color-text-muted); display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
-    .report-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 16px; }
-    .report-table th, .report-table td { border-bottom: 1px solid var(--color-border); padding: 8px 6px; text-align: left; }
-
-    #certificatePrintArea { display: none; }
-    @media print {
-      body * { visibility: hidden; }
-      #certificatePrintArea, #certificatePrintArea * { visibility: visible; }
-      #certificatePrintArea { display: flex !important; position: fixed; inset: 0; background: white; align-items: center; justify-content: center; padding: 40px; }
-      .cert-border { border: 12px double #3D405B; padding: 48px; text-align: center; width: 100%; max-width: 800px; border-radius: 16px; }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="app-container">
-    <aside class="left-panel">
-      <div class="header-box">
-        <h1>Morphology Explorer <span class="pro-pill" id="headerPlanBadge">FREE</span></h1>
-        <p>Multi-Year Word Study Studio</p>
-      </div>
-
-      <div class="online-status-bar" id="onlineStatusBar">
-        ● Online Dictionary Active
-      </div>
-
-      <div class="account-bar">
-        <div class="account-info">
-          <span class="account-name" id="displayStudentName">Guest Detective</span>
-          <span class="account-plan" id="displaySyncStatus">● Saved Locally</span>
-        </div>
-        <div style="display:flex; gap:6px;">
-          <button class="btn-small" onclick="openModal('authModal')">Sign In</button>
-          <button class="btn-small btn-upgrade" onclick="openModal('paywallModal')" id="upgradeBtn">Upgrade</button>
-        </div>
-      </div>
-
-      <div class="owly-stage">
-        <div class="speech-bubble" id="owlySpeech">
-          Hoot! Welcome word detective! Select a set to begin exploring morphemes.
-        </div>
-        
-        <div class="owl-canvas-container" id="owlyAvatarContainer">
-          <svg viewBox="0 0 100 110" width="100%" height="100%">
-            <circle id="owlCrownGlow" cx="50" cy="55" r="45" fill="none" stroke="#FFD700" stroke-width="3" stroke-dasharray="4 2" opacity="0"/>
-            <ellipse cx="50" cy="65" rx="34" ry="38" fill="#8B5A2B"/>
-            <ellipse cx="50" cy="68" rx="24" ry="28" fill="#F4E8C1"/>
-            <ellipse cx="20" cy="68" rx="8" ry="20" fill="#6F421B" transform="rotate(15 20 68)"/>
-            <ellipse cx="80" cy="68" rx="8" ry="20" fill="#6F421B" transform="rotate(-15 80 68)"/>
-            <polygon points="25,32 35,15 42,30" fill="#6F421B"/>
-            <polygon points="75,32 65,15 58,30" fill="#6F421B"/>
-            <circle cx="50" cy="42" r="28" fill="#8B5A2B"/>
-            <circle cx="38" cy="40" r="12" fill="#FFFFFF"/>
-            <circle cx="62" cy="40" r="12" fill="#FFFFFF"/>
-            <circle cx="38" cy="40" r="6" fill="#2B1E16"/>
-            <circle cx="62" cy="40" r="6" fill="#2B1E16"/>
-            <circle cx="40" cy="38" r="2" fill="#FFFFFF"/>
-            <circle cx="64" cy="38" r="2" fill="#FFFFFF"/>
-            <polygon points="50,44 45,54 55,54" fill="#E07A5F"/>
-            <g id="detectiveHat" opacity="0">
-              <path d="M 28 26 Q 50 14 72 26 Z" fill="#4A3525"/>
-              <rect x="22" y="24" width="56" height="4" rx="2" fill="#362517"/>
-            </g>
-            <g id="goldenCrown" opacity="0">
-              <polygon points="32,18 36,5 44,14 50,2 56,14 64,5 68,18" fill="#FFD700" stroke="#B8860B" stroke-width="1"/>
-            </g>
-          </svg>
-        </div>
-
-        <div>
-          <span class="tier-badge tier-starter" id="owlyTier">Starter Detective</span>
-        </div>
-      </div>
-
-      <div class="voice-card">
-        <h3>
-          <span>Owly's Reading Speed</span>
-          <button style="border:none; background:none; cursor:pointer; font-weight:700;" onclick="testOwlyVoice()">🔊 Test</button>
-        </h3>
-        <div class="slider-row">
-          <label for="rateSlider">Speed:</label>
-          <input type="range" id="rateSlider" min="0.6" max="1.2" step="0.05" value="0.9">
-        </div>
-      </div>
-
-      <div class="progress-card">
-        <h3>
-          <span>Mastery Progress</span>
-          <span id="wordsFoundCount" style="color:var(--color-terracotta);">0 Words</span>
-        </h3>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="unitProgressBar"></div>
-        </div>
-        <div class="progress-stats">
-          <span id="milestoneTarget">Next Rank: 5 Words</span>
-          <span style="cursor:pointer; text-decoration:underline;" onclick="resetProgress()">Reset</span>
-        </div>
-        <div class="action-row">
-          <button class="btn-outline" onclick="openTeacherDashboard()">📊 Progress Report</button>
-          <button class="btn-outline" onclick="printCertificate()">🎓 Certificate</button>
-        </div>
-      </div>
-    </aside>
-
-    <main class="right-panel">
-      <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchSet(1)">Set 1: Grades ≤ 3 (Free)</button>
-        <button class="tab-btn" onclick="switchSet(2)"><span id="lockIcon2">🔒</span> Set 2: Grades 3–4</button>
-        <button class="tab-btn" onclick="switchSet(3)"><span id="lockIcon3">🔒</span> Set 3: Grades 4–5+</button>
-        <button class="tab-btn" style="margin-left:auto; background:var(--color-amber);" onclick="startSetQuiz()">Set Quiz 📝</button>
-      </nav>
-
-      <div class="morpheme-selector" id="morphemeSelector"></div>
-
-      <section class="lesson-card" id="lessonWorkspace">
-        <div class="unit-banner">
-          <div>
