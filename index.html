@@ -759,6 +759,7 @@
         if (saved) {
           const parsed = JSON.parse(saved);
           appState = { ...appState, ...parsed };
+          if (!Array.isArray(appState.foundWords)) appState.foundWords = [];
           if (!appState.wordsBySet) appState.wordsBySet = { set1: [], set2: [], set3: [] };
         }
       } catch (e) {}
@@ -769,7 +770,7 @@
     }
 
     function syncUIWithState() {
-      document.getElementById('displayStudentName').textContent = appState.studentName;
+      document.getElementById('displayStudentName').textContent = appState.studentName || "Student Detective";
       updateProgress(false);
     }
 
